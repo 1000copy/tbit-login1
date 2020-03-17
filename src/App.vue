@@ -14,8 +14,8 @@
 // import HelloWorld from '@/components/HelloWorld.vue'
 export default {
    mounted(){
-   	   if ('islogin' != localStorage.getItem('islogin'))
-   	   	  this.logined = false 
+   	   // if ('islogin' != localStorage.getItem('islogin'))
+   	   // 	  this.logined = false 
    },
    methods: {
         afterLogin(status) {

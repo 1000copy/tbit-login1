@@ -13,7 +13,9 @@ export default {
   methods:{
   	logout(){
   		localStorage.setItem('islogin',"")
-      this.$router.push("/profile")
+      this.$router.push("/login").catch((err) => {
+        console.log(`Problem handling something: `,err);
+      });
       this.$emit("logined", false);
   	},
   },

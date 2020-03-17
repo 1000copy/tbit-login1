@@ -21,13 +21,12 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: () => import('../components/profile.vue'),
-    meta: {secretgarden: true},
+    component: () => import('../components/profile.vue'),    
   },  
   {
     path: '/logout',
     name: 'logout',
-    component: () => import('../components/logout.vue'),
+    component: () => import('../components/logout.vue'),    
     meta: {secretgarden: false},
   }
 ]

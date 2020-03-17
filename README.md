@@ -1,15 +1,6 @@
 # Login
 
-这个自动登录的逻辑可以深挖做出多种实现,例如登录成功之后把用户信息加密并通过localstorage在多个tab之间公用,这样再新打开tab时就不需要再次自动登录.这里就以最简单的实现来进行讲解,基本流程如下:
-
-- 用户请求页面资源
-- 检查本地cookie/localstorage是否有token
-- 如果没有token,不管用户请求打开的是哪个路由,都一律跳转到login路由
-- 如果检查到token,先请求自动登录的接口,根据返回的结果判断是进入用户请求的路由还是跳转到login路由
-
-ref : https://segmentfault.com/a/1190000016040068
-
-关于vue登录注册，并保持登录状态，是vue玩家必经之路，网上也有很多的解决方法，但是有一些太过于复杂，新手可能会看的一脸懵逼，现在给大家介绍一种我自己写项目在用而且并不难理解的一种方法。
+一种好用且易于理解的一种登录控制方法。
 
 首先，标记每个路由进入是否需要登录：
 
@@ -68,7 +59,7 @@ ref : https://segmentfault.com/a/1190000016040068
 
 	  	logout(){
 	  	  localStorage.setItem('islogin',"")
-	      this.$router.push("/profile")
+	      this.$router.push("/login")
 	      this.$emit("logined", false);
 	  	},
 
@@ -82,9 +73,13 @@ ref : https://segmentfault.com/a/1190000016040068
     </div>
     <router-view @logined="afterLogin"/>
 
-这样做容易理解，但是有一个问题，就是如果用户直接访问/profile，也就是不是切换而来的，那么路由切换守卫代码不会执行，因此也不能防止在未受权情况下的访问。
+## 问题
 
-所以，这个方案不够好。
+曾经出现这样的情况：
+
+	这样做容易理解，但是有一个问题，就是如果用户直接访问profile，也就是不是切换而来的，那么路由切换守卫代码不会执行，因此也不能防止在未受权情况下的访问。
+
+但是后来无法重现了。
 
 # tbit-login
 
