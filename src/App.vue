@@ -1,32 +1,35 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div id="nav"  v-if="logined" >
+      <router-link to="/public">public</router-link> |
+      <router-link to="/profile">profile</router-link> |
+      <router-link to="/login">login</router-link> |
+      <router-link to="/logout">logout</router-link>
     </div>
-    <router-view/>
+    <router-view @logined="afterLogin"/>
   </div>
 </template>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+<script>
+// @ is an alias to /src
+// import HelloWorld from '@/components/HelloWorld.vue'
+export default {
+   mounted(){
+   	   if ('islogin' != localStorage.getItem('islogin'))
+   	   	  this.logined = false 
+   },
+   methods: {
+        afterLogin(status) {
+            this.logined = status;
+        },
+        logout() {
+            this.logined = false;
+        }
+    },
+	data() {
+        return {
+            logined: true,            
+        }
+    },
 }
+</script>
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
