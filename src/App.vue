@@ -1,35 +1,29 @@
 <template>
   <div id="app">
-    <div id="nav"  v-if="logined" >
+    <div id="nav"  v-if="islogin" >
       <router-link to="/public">public</router-link> |
       <router-link to="/profile">profile</router-link> |
       <router-link to="/login">login</router-link> |
       <router-link to="/logout">logout</router-link>
     </div>
-    <router-view @logined="afterLogin"/>
+    <router-view />
   </div>
 </template>
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
 export default {
    mounted(){
-   	   // if ('islogin' != localStorage.getItem('islogin'))
-   	   // 	  this.logined = false 
+      console.log(1)
+   	   if (!this.islogin && this.$router.currentRoute.name != "login"){
+        console.log(22)
+          this.$router.replace({name:"login"}).catch(function(err){console.log(err)})
+          console.log(33)
+       }
    },
-   methods: {
-        afterLogin(status) {
-            this.logined = status;
-        },
-        logout() {
-            this.logined = false;
-        }
-    },
-	data() {
-        return {
-            logined: true,            
-        }
-    },
+   computed:{
+    islogin(){
+      return this.$store.state.islogin
+    }
+   },
 }
 </script>
 

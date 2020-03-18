@@ -1,8 +1,21 @@
-# Login
 
-一种好用且易于理解的一种登录控制方法。
+# Vuejs Login 一种好用且易于理解的一种登录控制方法。
 
-首先，标记每个路由进入是否需要登录：
+算法的要点是：
+
+1. vue单页面应用是有多个路由的,一部分是需要登录的，一部分是公开的，无法登录即可查看和操作。
+2. 我们会在路由中通过标志来标记两者的差别
+3.1 我们可以在路由导航发生之前做检查，如果登录了或者即将导航到的路由无需登录即可查看，那么就允许此导航继续
+3.2 否则，把路由导航到登录页面
+
+为此，我们设置一个案例，此案例有4个路由分别是
+
+	login
+	logout
+	profile
+	public
+
+首先，使用secretgarden标记每个路由进入是否需要登录：
 
 	const routes = [
 	  {
@@ -21,57 +34,89 @@
 	  {
 	    path: '/profile',
 	    name: 'profile',
-	    component: () => import('../components/profile.vue'),
-	    meta: {secretgarden: true},
+	    component: () => import('../components/profile.vue'),	    
 	  },  
 	  {
 	    path: '/logout',
 	    name: 'logout',
-	    component: () => import('../components/logout.vue'),
-	    meta: {secretgarden: false},
+	    component: () => import('../components/logout.vue'),	    
 	  }
 	]
 
 
 登录后需要设置状态：
 
-          localStorage.setItem("Flag", "isLogin");
-          this.$router.push("/home");
-          this.$emit("logined", true)// 登录成功后需要发射事件，通知首页更新显示内容
+         this.$store.commit('dologin')
 
-在路由切换守卫代码函数中，检查如果是已经路由直接放行，如果没有登录而去向路由需要登录的化，那么导向到login路由内：
+我们使用vuex来做状态管理器
 
+
+	import Vue from 'vue'
+	import Vuex from 'vuex'
+
+	Vue.use(Vuex)
+
+	export default new Vuex.Store({
+	  state: {
+	  	islogin:false
+	  },
+	  mutations: {
+	  	dologin:(state)=>{state.islogin = true},
+	  	dologout:(state)=>{state.islogin = false},
+	  },
+	  actions: {
+	  },
+	  modules: {
+	  }
+	})
+
+在main.js内，添加路由切换守卫代码，检查如果是已经登录直接放行，如果没有登录而去向路由需要登录的化，那么导向到login路由内：
+
+	function isSecret(to){
+	  // console.log(!!to.meta,to.meta.secretgarden==false)
+	  return !(!!to.meta && to.meta.secretgarden==false)
+	}
 	router.beforeEach((to, from, next) => {
-	  console.log(to,from)
-	  let getFlag = localStorage.getItem('islogin');
-	  if(getFlag != "islogin" && to.meta.secretgarden){    
-	    next({path: '/login',})    
-	  }else
+	  if( store.state.islogin || !isSecret(to)){      
 	      next()      
+	  }else{        
+	      next({path: '/login',})  
+	  }
 	});
 	router.afterEach(route => {
 	  window.scroll(0, 0);
 	});
 
-这样就已经完成了Vue的登录注册，当用户关闭浏览器或者第二天再次进入网站，用户依旧可以保持着登录的状态直到用户手动退出登录。
-
-用户退出只需要localStorage.removeItem("Flag")即可:
-
-	  	logout(){
-	  	  localStorage.setItem('islogin',"")
-	      this.$router.push("/login")
-	      this.$emit("logined", false);
-	  	},
 
 首页app.vue应该根据是否登录来决定显示内容：
 
-    <div id="nav"  v-if="logined" >
-      <router-link to="/public">public</router-link> |
-      <router-link to="/profile">profile</router-link> |
-      <router-link to="/login">login</router-link> |
-      <router-link to="/logout">logout</router-link>
-    </div>
-    <router-view @logined="afterLogin"/>
+	<template>
+	  <div id="app">
+	    <div id="nav"  v-if="islogin" >
+	      <router-link to="/public">public</router-link> |
+	      <router-link to="/profile">profile</router-link> |
+	      <router-link to="/login">login</router-link> |
+	      <router-link to="/logout">logout</router-link>
+	    </div>
+	    <router-view />
+	  </div>
+	</template>
+	<script>
+	export default {
+	   mounted(){
+	   	   console.log(1,this.islogin ,this.$router.currentRoute.name)
+	       if (!this.islogin && this.$router.currentRoute.name != "login")
+	          this.$router.push({name:"login"})
+	   },
+	   computed:{
+	    islogin(){
+	      return this.$store.state.islogin
+	    }
+	   },
+	}
+	</script>
+
+
 
 ## 问题
 
@@ -81,23 +126,15 @@
 
 但是后来无法重现了。
 
-# tbit-login
+# vue store 状态的多标签共享
 
-## Project setup
-```
-npm install
-```
+vue store 状态，默认在不同的浏览器标签是不会共享的。想要共享的化，需要参考此[文档](https://stackoverflow.com/questions/53563268/vuex-how-to-persist-store-updates-across-different-tabs).
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+# vue store 在浏览器刷新时会消失
 
-### Compiles and minifies for production
-```
-npm run build
-```
+想要保持的化，需要参考此文档： https://juejin.im/post/5c809599f265da2dbe030ec6
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# ref 
 
+https://www.thepolyglotdeveloper.com/2018/04/simple-user-login-vuejs-web-application/
+https://segmentfault.com/a/1190000016040068

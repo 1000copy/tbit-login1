@@ -13,16 +13,15 @@ var vue = new Vue({
 // function islogin(){  
 //   return localStorage.getItem('islogin') == "islogin"
 // }
+function isSecret(to){
+  // console.log(!!to.meta,to.meta.secretgarden==false)
+  return !(!!to.meta && to.meta.secretgarden==false)
+}
 router.beforeEach((to, from, next) => {
-  console.log(to,from)
-  let getFlag = localStorage.getItem('islogin');
-  console.log(getFlag != "islogin" , to.meta , to.meta.secretgarden,to.meta != undefined && to.meta.secretgarden != undefined && to.meta.secretgarden)
-  if(getFlag != "islogin" || (to.meta != undefined && to.meta.secretgarden != undefined && to.meta.secretgarden)){    
-    console.log(1)
-        next()      
-  }else{  
-      console.log(2)
-      next({path: '/login',})      
+  if( store.state.islogin || !isSecret(to)){      
+      next()      
+  }else{        
+      next({path: '/login',})  
   }
 });
 router.afterEach(route => {

@@ -1,22 +1,17 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>   
+  <div class="hello">    
     <button @click="logout">Logout?</button>
   </div>
 </template>
 
 <script>
 export default {
-  props: {
-    msg: String
-  },
   methods:{
   	logout(){
-  		localStorage.setItem('islogin',"")
+  		this.$store.commit('dologout')
       this.$router.push("/login").catch((err) => {
         console.log(`Problem handling something: `,err);
-      });
-      this.$emit("logined", false);
+      });      
   	},
   },
 }

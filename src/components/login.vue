@@ -11,9 +11,10 @@ export default {
   },
   methods:{
   	login(){
-  		localStorage.setItem("islogin", "islogin")
-      this.$router.push("/profile")
-      this.$emit("logined", true);
+      if (true/*some login for login*/){
+    		this.$store.commit('dologin')
+        this.$router.push("/profile")
+      }
   	},
   },
 }
