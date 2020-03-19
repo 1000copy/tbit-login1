@@ -1,5 +1,5 @@
 
-# Vuejs Login 一种好用且易于理解的一种登录控制方法。
+
 
 算法的要点是：
 
@@ -133,7 +133,28 @@ vue store 状态，默认在不同的浏览器标签是不会共享的。想要�
 # vue store 在浏览器刷新时会消失
 
 想要保持的化，需要参考此文档： https://juejin.im/post/5c809599f265da2dbe030ec6
+## 如何让localStorage是响应的？
 
+Is there any way to 'watch' for localstorage in Vuejs?
+https://stackoverflow.com/questions/42974170/is-there-any-way-to-watch-for-localstorage-in-vuejs 
+https://jsfiddle.net/djsj8dku/1/
+
+关键在于data返回get/set属性：
+
+    new Vue({
+    	el: '#app',
+      data: function() {
+      	return {
+        	world: 'world',
+          get token() {
+          	return localStorage.getItem('token') || 0;
+          },
+          set token(value) {
+          	localStorage.setItem('token', value);
+          }
+        };
+      }
+    });
 # ref 
 
 https://www.thepolyglotdeveloper.com/2018/04/simple-user-login-vuejs-web-application/
